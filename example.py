@@ -1,13 +1,13 @@
-import Game
-import Nations
+from game import Game
+from nation import Nation
 import random as r
 
-germany = Nations.Nation(name='Germany', human=True)
-russia = Nations.Nation(name='Russia', human=False)
+germany = Nation(name='Germany', human=True)
+russia = Nation(name='Russia', human=False)
 
 x, y = 4, 4
 
-game = Game.Game(size=(x, y), nations=[germany, russia])
+game = Game(size=(x, y), nations=[germany, russia])
 
 while True:
     if game.is_there_a_winner():
@@ -34,7 +34,7 @@ while True:
         elif game.phase == 2:
             # This is the phase that allows the AI to move units into enemy territory
             game.battles = []
-            unit = game.moveable[0]
+            unit = game.movable[0]
             # Again here, the AI should have some logic for where to move the units.
             # In this example, the first moveable unit is moved to a random location.
             pos = unit.get_position()
@@ -53,7 +53,7 @@ while True:
         elif game.phase == 3:
             # This is the same as phase two, just not allowed to move into unfriendly territory.
             # Again here the AI should make a decision, if it should move or not.
-            unit = game.moveable[0]
+            unit = game.movable[0]
             pos = unit.get_position()
             possible = [tile for tile in game.map.board[pos[0]][pos[1]].neighbours if tile.owner == game.current_player]
 
