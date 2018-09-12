@@ -85,10 +85,3 @@ class MapClass(object):
         '''
         #print(board)
         return board
-
-
-
-
-
-#1MapTest = MapClass(size=(6, 6), nations=[('Germany', 4), ('Russia', 4), ('China', 4)])
-

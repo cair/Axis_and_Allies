@@ -39,7 +39,7 @@ while True:
             # In this example, the first moveable unit is moved to a random location.
             pos = unit.get_position()
             toTile = r.choice(game.map.board[pos[0]][pos[1]].neighbours)
-            game.move_unit(game.map.board[pos[0]][pos[1]], toTile, 1, unit.__class__, unit)
+            game.move_unit(game.map.board[pos[0]][pos[1]], toTile, 1, unit)
             # This procedure should be repeated until there are no more units to moved.
             game.next_phase()
         elif game.phase == 2.5:
@@ -59,7 +59,7 @@ while True:
 
             if len(possible) != 0:
                 toTile = r.choice(possible)
-                game.move_unit(game.map.board[pos[0]][pos[1]], toTile, 1, unit.__class__, unit)
+                game.move_unit(game.map.board[pos[0]][pos[1]], toTile, 1, unit)
 
             game.next_phase()
         elif game.phase == 4:

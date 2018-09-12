@@ -1,3 +1,4 @@
+
 import pygame
 import numpy as np
 from PIL import Image
@@ -5,6 +6,7 @@ from pygame.locals import *
 
 from nation import Nation
 from game import Game, GameManager
+import new_bot as new_bots
 
 
 def translate_to_array(board, x, y, game):
@@ -71,10 +73,12 @@ def with_pauses():
 
 
 def without_pauses():
-    x, y = 2, 2
+    x, y = 6, 6
 
-    germany = Nation(name='Germany', human=False)
-    russia = Nation(name='Russia', human=False, difficulty="Easy")
+    bot = new_bots.Bot()
+    bot2 = new_bots.Bot()
+    germany = Nation(name='Germany', human=False, difficulty='new_bot', bot=bot2)
+    russia = Nation(name='Russia', human=False, difficulty="new_bot", bot=bot)
 
     game = Game(size=(x, y), nations=[germany, russia])
 
@@ -87,7 +91,6 @@ def without_pauses():
     while True:
         game.bot()
         if game.is_there_a_winner():
-            print(game.turn)
             screen.fill(0)
             data = translate_to_array(game.map.board, x, y, game)
             img = Image.fromarray(data, 'RGB')
@@ -112,3 +115,4 @@ def without_pauses():
 
 # with_pauses()
 without_pauses()
+
