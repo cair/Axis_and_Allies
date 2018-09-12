@@ -158,52 +158,47 @@ class Game():
     def conquer_tile(self, tile, new_owner):
         tile.owner = new_owner
 
-    def move_unit(self, from_tile, to_tile, n, type_class, unit):
-        c = 0
+    def move_unit(self, from_tile, to_tile, n, unit):
         d = 0
         while True:
             if d == n:
                 break
-            c += 1
-            if isinstance(unit, type_class):
-                delta_x = abs(from_tile.cords[0] - to_tile.cords[0])
-                delta_y = abs(from_tile.cords[1] - to_tile.cords[1])
-
-                # todo add is legal function instead.
-                if delta_x + delta_y <= unit.range:
-                    if to_tile.owner != self.current_player:
-                        if unit.used_steps == 0:
-                            unit.set_step(unit.range)
-                        else:
-                            unit.set_step(delta_x + delta_y)
-
-                        if to_tile.units.__len__() == 0:
-                            self.conquer_tile(to_tile, self.current_player)
-                        elif not self.battles.__contains__(to_tile.cords):
-                            self.battles.append(to_tile.cords)
+            delta_x = abs(from_tile.cords[0] - to_tile.cords[0])
+            delta_y = abs(from_tile.cords[1] - to_tile.cords[1])
+            # todo add is legal function instead.
+            if delta_x + delta_y <= unit.range:
+                if to_tile.owner != self.current_player:
+                    if unit.used_steps == 0:
+                        unit.set_step(unit.range)
                     else:
-                        unit.set_step(delta_y + delta_x)
+                        unit.set_step(delta_x + delta_y)
 
-                    unit.set_position(to_tile.cords)
-                    unit.set_old_position(from_tile.cords)
-                    if unit.used_steps == unit.range:
-                        try:
-                            self.movable.remove(unit)
-                        except ValueError:
-                            print(ValueError.args)
+                    if to_tile.units.__len__() == 0:
+                        self.conquer_tile(to_tile, self.current_player)
+                    elif not self.battles.__contains__(to_tile.cords):
+                        self.battles.append(to_tile.cords)
+                else:
+                    unit.set_step(delta_y + delta_x)
 
-                    to_tile.units.append(unit)
-                    from_tile.units.remove(unit)
-                    if self.battles.__contains__(from_tile.cords):
-                        valid = False
-                        for unit in from_tile.units:
-                            if unit.owner == self.current_player:
-                                valid = True
-                                break
-                        if not valid:
-                            self.battles.remove(from_tile.cords)
-                    d += 1
-                    c -= 1
+                unit.set_position(to_tile.cords)
+                unit.set_old_position(from_tile.cords)
+                if unit.used_steps == unit.range:
+                    try:
+                        self.movable.remove(unit)
+                    except ValueError:
+                        print(ValueError.args)
+
+                to_tile.units.append(unit)
+                from_tile.units.remove(unit)
+                if self.battles.__contains__(from_tile.cords):
+                    valid = False
+                    for unit in from_tile.units:
+                        if unit.owner == self.current_player:
+                            valid = True
+                            break
+                    if not valid:
+                        self.battles.remove(from_tile.cords)
+                d += 1
 
     def reset_all_units(self):
         for h in self.map.board:
@@ -336,3 +331,5 @@ class Game():
                 Bots.turtle_bot(self)
             elif self.current_player.difficulty == "Easy":
                 Bots.easy_bot(self)
+            elif self.current_player.difficulty == "new_bot":
+                self.current_player.bot.play_bot(self)

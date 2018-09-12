@@ -82,7 +82,7 @@ def random_bot(self):
                 to_tile = r.choice(self.map.board[pos[0]][pos[1]].neighbours)
                 if to_tile.owner != self.current_player:
                     moved[to_tile.cords.__str__()] = pos
-                self.move_unit(self.map.board[pos[0]][pos[1]], to_tile, 1, unit.__class__, unit)
+                self.move_unit(self.map.board[pos[0]][pos[1]], to_tile, 1, unit)
             else:
                 break
         self.phase = 2.5
@@ -163,7 +163,7 @@ def random_bot(self):
                     break
                 to_tile = r.choice(possible)
                 if to_tile.owner == self.current_player:
-                    self.move_unit(self.map.board[pos[0]][pos[1]], to_tile, 1, unit.__class__, unit)
+                    self.move_unit(self.map.board[pos[0]][pos[1]], to_tile, 1, unit)
             else:
                 break
         self.next_phase()
@@ -217,9 +217,9 @@ def easy_bot(self):
                     all_units = self.find_movable_in_tile(pos)
                     if all_units.__len__() > to_tile.units.__len__():
                         for unitA in all_units:
-                            self.move_unit(self.map.board[pos[0]][pos[1]], to_tile, 1, unit.__class__, unitA)
+                            self.move_unit(self.map.board[pos[0]][pos[1]], to_tile, 1, unitA)
                 else:
-                    self.move_unit(self.map.board[pos[0]][pos[1]], to_tile, 1, unit.__class__, unit)
+                    self.move_unit(self.map.board[pos[0]][pos[1]], to_tile, 1, unit)
             else:
                 break
         self.phase = 2.5
@@ -300,7 +300,7 @@ def easy_bot(self):
                     break
                 to_tile = r.choice(possible)
                 if to_tile.owner == self.current_player:
-                    self.move_unit(self.map.board[pos[0]][pos[1]], to_tile, 1, unit.__class__, unit)
+                    self.move_unit(self.map.board[pos[0]][pos[1]], to_tile, 1, unit)
             else:
                 break
         self.next_phase()
@@ -317,10 +317,12 @@ def easy_bot(self):
                 unit.set_position(tile.cords)
 
         if self.is_there_a_winner():
+            print("This")
             return True
         else:
             self.reset_all_units()
             if not self.valid_board()[0]:
                 print("Not Valid mando")
                 print(self.map.board)
-            self.next_phase()
+            else:
+                self.next_phase()
