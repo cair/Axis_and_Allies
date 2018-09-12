@@ -1,6 +1,6 @@
-import MapGenerator as mapGen
-import Units
-import Buildings
+import map_generator as mapGen
+import units
+import buildings
 import random as r
 import copy
 import numpy as np
@@ -64,8 +64,8 @@ class Game():
     def starting_conditions(self, n):
         for tile in self.border_tiles:
             for i in range(n):
-                inf_unit = Units.Infantry(owner=tile.owner)
-                tank_unit = Units.Tank(owner=tile.owner)
+                inf_unit = units.Infantry(owner=tile.owner)
+                tank_unit = units.Tank(owner=tile.owner)
                 tile.units.append(inf_unit)
                 tile.units.append(tank_unit)
                 tank_unit.set_position(tile.cords)
@@ -73,11 +73,11 @@ class Game():
 
         # All the way to the left
         tile = self.map.board[int(self.map.board.__len__() / 2) - 1][0]
-        tile.constructions.append(Buildings.Industry(owner=tile.owner))
+        tile.constructions.append(buildings.Industry(owner=tile.owner))
         print(self.map.board.__len__())
         # All the way to the right
         tile = self.map.board[int(self.map.board.__len__() / 2) - 1][self.map.board.__len__() - 1]
-        tile.constructions.append(Buildings.Industry(owner=tile.owner))
+        tile.constructions.append(buildings.Industry(owner=tile.owner))
 
     def rotate(self, n=1):
         return self.nations[n:] + self.nations[:n]
@@ -88,7 +88,7 @@ class Game():
             for h in w:
                 if h.owner == self.current_player:
                     for const in h.constructions:
-                        if isinstance(const, Buildings.Industry):
+                        if isinstance(const, buildings.Industry):
                             deployable_places.append(h)
 
         return deployable_places
@@ -141,9 +141,9 @@ class Game():
 
     def recruit_unit(self, n):
         if n == 0:
-            unit = Units.Infantry(self.current_player)
+            unit = units.Infantry(self.current_player)
         elif n == 1:
-            unit = Units.Tank(self.current_player)
+            unit = units.Tank(self.current_player)
 
         if self.current_player not in self.purchases:
             self.purchases[self.current_player] = []
@@ -328,11 +328,11 @@ class Game():
         return c
 
     def bot(self):
-        import Bots
+        import bots
         if not self.current_player.human:
             if self.current_player.difficulty == "Random":
-                Bots.random_bot(self)
+                bots.random_bot(self)
             elif self.current_player.difficulty == "Turtle":
-                Bots.turtle_bot(self)
+                bots.turtle_bot(self)
             elif self.current_player.difficulty == "Easy":
-                Bots.easy_bot(self)
+                bots.easy_bot(self)
