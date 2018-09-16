@@ -217,6 +217,7 @@ class Game():
         return max_unit
 
     def get_dice(self, n=6):
+        r.seed()
         return r.randint(1, n)
 
     def do_battle(self, cords):

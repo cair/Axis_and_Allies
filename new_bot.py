@@ -49,6 +49,25 @@ class Bot(object):
                 break
         game.phase = 2.5
 
+    def prioritize_casualties(self, game, values):
+        to_be_deleted = dict()
+        attacker_types = list(values[0].keys())
+        for i in range(values[1]):
+            unit_type = r.choice(attacker_types)
+            unit = values[0][unit_type][0]
+            if unit.type not in to_be_deleted:
+                to_be_deleted[unit.type] = []
+            to_be_deleted[unit.type].append(unit)
+            values[0][unit_type].remove(unit)
+            if len(values[0][unit_type]) == 0:
+                values[0].pop(unit_type, None)
+            attacker_types = list(values[0].keys())
+
+        for key in to_be_deleted:
+            game.take_casualties(to_be_deleted, to_be_deleted[key][0].type, len(to_be_deleted[key]))
+
+        return NotImplementedError
+
     def combat_phase(self, game):
         while len(game.battles) > 0:
             results = game.do_battle(game.battles[0])
@@ -58,48 +77,20 @@ class Bot(object):
             defend_finished = False
             if attacker[1] > 0:
                 attacker_count = game.find_unit_count(attacker[0])
-                attacker_types = list(attacker[0].keys())
                 if attacker[1] >= attacker_count:
                     game.take_casualties(attacker[0], 'All', attacker_count)
                     attack_finished = True
                 else:
-                    to_be_deleted = dict()
-                    for i in range(attacker[1]):
-                        unit_type = r.choice(attacker_types)
-                        unit = attacker[0][unit_type][0]
-                        if unit.type not in to_be_deleted:
-                            to_be_deleted[unit.type] = []
-                        to_be_deleted[unit.type].append(unit)
-                        attacker[0][unit_type].remove(unit)
-                        if len(attacker[0][unit_type]) == 0:
-                            attacker[0].pop(unit_type, None)
-                        attacker_types = list(attacker[0].keys())
-
-                    for key in to_be_deleted:
-                        game.take_casualties(to_be_deleted, to_be_deleted[key][0].type, len(to_be_deleted[key]))
-
+                    game.current_player.bot.prioritize_casualties(game, attacker)
             if defender[1] > 0:
                 defender_count = game.find_unit_count(defender[0])
-                defender_types = list(defender[0].keys())
                 if defender[1] >= defender_count:
                     game.take_casualties(defender[0], 'All', defender_count)
                     defend_finished = True
                 else:
                     defender_keys = list(defender[0].keys())
                     if not defender[0][defender_keys[0]][0].owner.human:
-                        to_be_deleted = dict()
-                        for i in range(defender[1]):
-                            unit_type = r.choice(defender_types)
-                            unit = defender[0][unit_type][0]
-                            if unit.type not in to_be_deleted:
-                                to_be_deleted[unit.type] = []
-                            to_be_deleted[unit.type].append(unit)
-                            defender[0][unit_type].remove(unit)
-                            if len(defender[0][unit_type]) == 0:
-                                defender[0].pop(unit_type, None)
-                            defender_types = list(defender[0].keys())
-                        for key in to_be_deleted:
-                            game.take_casualties(to_be_deleted, to_be_deleted[key][0].type, len(to_be_deleted[key]))
+                        defender[0][defender_keys[0]][0].owner.bot.prioritize_casualties(game, defender)
                     else:
                         game.current_player = defender[0][defender_keys[0]][0].owner
                         return defender
@@ -110,6 +101,7 @@ class Bot(object):
             if attack_finished or defend_finished:
                 game.battles.remove(game.battles[0])
         game.phase = 3
+
 
     def phase_3(self, game):
         while len(game.movable) > 0:
