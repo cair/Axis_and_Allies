@@ -62,25 +62,23 @@ class NewBot(Bot):
         while len(game.movable) > 0:
             unit = game.movable[0]
             position = unit.get_position()
-            new_tile = (9999, None)
+            new_tile = (-1, None)
             possible_tiles = []
             for tile in game.map.board[position[0]][position[1]].neighbours:
                 if tile.owner == unit.owner:
                     for border_tile in game.border_tiles:
                         value = self.calculate_distance_between_tiles(tile, border_tile)
-                        if new_tile[0] > value:
+                        if new_tile[0] > value or new_tile[1] is None:
                             new_tile = (value, tile)
                             if value == 0:
                                 possible_tiles.append(tile)
             if new_tile[0] == 0:
-                #todo
                 min_units = (-1, None)
                 for tile in possible_tiles:
                     if len(tile.units) < min_units[0] or min_units[1] is None:
                         min_units = (len(tile.units), tile)
                 game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], 1, unit)
-                print("")
-            elif new_tile[0] == 9999:
+            elif new_tile[0] == -1:
                 game.movable.remove(game.movable[0])
             elif new_tile[1] is not None:
                 game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], 1, unit)

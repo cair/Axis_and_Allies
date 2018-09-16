@@ -73,7 +73,7 @@ def with_pauses():
 
 
 def without_pauses():
-    x, y = 6, 6
+    x, y = 12, 12
 
     bot = new_bots.Bot()
     bot2 = NewBot()
@@ -87,7 +87,7 @@ def without_pauses():
     width, height = 1024, 768
     screen = pygame.display.set_mode((width, height))
     i = 0
-
+    myfont = pygame.font.SysFont('Comic Sans MS', 30)
     while True:
         game.bot()
         if game.is_there_a_winner():
@@ -107,6 +107,7 @@ def without_pauses():
             img = Image.fromarray(data, 'RGB')
             img = img.resize((1024, 768))
             img = pygame.surfarray.make_surface(np.array(img))
+
             screen.blit(pygame.transform.rotate(img, 90), (0, 0))
             pygame.display.flip()
             pygame.time.wait(50)
