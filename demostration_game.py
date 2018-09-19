@@ -9,6 +9,7 @@ from game import Game, GameManager
 import new_bot as new_bots
 from modified_bot import NewBot
 
+
 def translate_to_array(board, x, y, game):
     new_board = np.zeros((x, y, 3), dtype=np.uint8)
     global_max = game.find_global_max()
@@ -73,12 +74,13 @@ def with_pauses():
 
 
 def without_pauses():
-    x, y = 12, 12
+    x, y = 6, 6
+    from modified_bot import NewBot2
 
-    bot = new_bots.Bot()
-    bot2 = NewBot()
-    germany = Nation(name='Germany', human=False, difficulty='new_bot', bot=bot2)
-    russia = Nation(name='Russia', human=False, difficulty="new_bot", bot=bot)
+    bot = NewBot2(attack_threshold=0.1)
+    bot2 = NewBot2(attack_threshold=0.35)
+    germany = Nation(name='Germany', human=False, difficulty='new_bot', bot=bot)
+    russia = Nation(name='Russia', human=False, difficulty="new_bot", bot=bot2)
 
     game = Game(size=(x, y), nations=[germany, russia])
 

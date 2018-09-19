@@ -39,6 +39,7 @@ class Game():
         self.border_tiles = self.calculate_border()
         self.starting_conditions(n=2)
         self.battles = []
+        self.movable = []
         self.movable_units()
         self.recruitable_list = [2, 5]
         self.history = []
@@ -312,7 +313,8 @@ class Game():
     def find_movable_in_tile(self, cords):
         units = []
         for unit in self.map.board[cords[0]][cords[1]].units:
-            if unit.used_steps > unit.range:
+
+            if unit.used_steps < unit.range:
                 units.append(unit)
         return units
 
@@ -328,9 +330,5 @@ class Game():
         if not self.current_player.human:
             if self.current_player.difficulty == "Random":
                 bots.random_bot(self)
-            elif self.current_player.difficulty == "Turtle":
-                bots.turtle_bot(self)
-            elif self.current_player.difficulty == "Easy":
-                bots.easy_bot()
             elif self.current_player.difficulty == "new_bot":
                 self.current_player.bot.play_bot(self)

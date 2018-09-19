@@ -1,64 +1,6 @@
 import random as r
 
 
-def turtle_bot(self):
-    moved = dict()
-    if self.phase == 0:
-        self.movable_units()
-        self.deployable_places = self.find_deployable_places()
-        self.next_phase()
-    elif self.phase == 1:
-        # NOTE!!!!!!! This should be done the round before.
-        self.purchase_units = self.calculate_purchase_units()
-        used = 0
-        while True:
-            pos = self.recruitable(self.purchase_units - used)
-            if pos.__len__() == 0:
-                self.next_phase()
-                break
-            choice = r.randint(0, len(pos) - 1)
-            self.recruit_unit(choice)
-            used += pos[choice]
-    elif self.phase == 2:
-        while self.movable.__len__() > 0:
-            break
-        self.next_phase()
-    elif self.phase == 3:
-        while self.movable.__len__() > 0:
-            if r.random() > 0.5:
-                unit = self.movable[0]
-                pos = unit.get_position()
-                possible = []
-                for tile in self.map.board[pos[0]][pos[1]].neighbours:
-                    if tile.owner == self.current_player:
-                        possible.append(tile)
-                if possible.__len__() == 0:
-                    self.movable.remove(self.movable[0])
-                    break
-                to_tile = r.choice(possible)
-                if to_tile.owner == self.current_player:
-                    self.move_unit(self.map.board[pos[0]][pos[1]], to_tile, 1, unit.__class__, unit)
-            else:
-                break
-        self.next_phase()
-    elif self.phase == 4:
-        self.next_phase()
-    elif self.phase == 5:
-        if self.current_player in self.purchases and self.deployable_places.__len__() > 0:
-            while self.purchases[self.current_player].__len__() > 0:
-                i = r.randint(0, self.deployable_places.__len__() - 1)
-                tile = self.deployable_places[i]
-                unit = self.purchases[self.current_player][0]
-                self.purchases[self.current_player].remove(unit)
-                tile.units.append(unit)
-                unit.set_position(tile.cords)
-        if self.is_there_a_winner():
-            return True
-        else:
-            self.resetDasUnits()
-            self.next_phase()
-
-
 def random_bot(self):
     moved = dict()
     if self.phase == 0:
@@ -136,7 +78,8 @@ def random_bot(self):
                                 defender[0].pop(unit_type, None)
                             defender_types = list(defender[0].keys())
                         for key in to_be_deleted:
-                            self.take_casualties(to_be_deleted, to_be_deleted[key][0].type, to_be_deleted[key].__len__())
+                            self.take_casualties(to_be_deleted, to_be_deleted[key][0].type,
+                                                 to_be_deleted[key].__len__())
                     else:
                         self.current_player = defender[0][defender_keys[0]][0].owner
                         return defender
@@ -204,7 +147,7 @@ def easy_bot(self):
             self.recruit_unit(choice)
             used += pos[choice]
 
-    #Should calculate how many unit one should use in attack.
+    # Should calculate how many unit one should use in attack.
     elif self.phase == 2:
         self.battles = []
         while self.movable.__len__() > 0:
@@ -266,7 +209,7 @@ def easy_bot(self):
                         for i in range(defender[1]):
                             unit_type = r.choice(defender_types)
                             unit = defender[0][unit_type][0]
-                            if not unit.type in to_be_deleted:
+                            if unit.type not in to_be_deleted:
                                 to_be_deleted[unit.type] = []
                             to_be_deleted[unit.type].append(unit)
                             defender[0][unit_type].remove(unit)
@@ -274,7 +217,8 @@ def easy_bot(self):
                                 defender[0].pop(unit_type, None)
                             defender_types = list(defender[0].keys())
                         for key in to_be_deleted:
-                            self.take_casualties(to_be_deleted, to_be_deleted[key][0].type, to_be_deleted[key].__len__())
+                            self.take_casualties(to_be_deleted, to_be_deleted[key][0].type,
+                                                 to_be_deleted[key].__len__())
                     else:
                         self.current_player = defender[0][defender_keys[0]][0].owner
                         return defender

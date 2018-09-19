@@ -1,5 +1,5 @@
 import random as r
-
+from units import Infantry, Tank
 
 from new_bot import Bot
 
@@ -23,6 +23,8 @@ class NewBot(Bot):
         x2, y2 = tile_2.cords[0], tile_2.cords[1]
 
         return abs(x-x2)+abs(y-y2)
+
+
     '''
     def phase_2(self, game):
         """
@@ -123,4 +125,35 @@ class NewBot(Bot):
             game.take_casualties(to_be_deleted, to_be_deleted[key][0].type, len(to_be_deleted[key]))
 
 
+class NewBot2(NewBot):
+
+    def __init__(self, attack_threshold):
+        Bot.__init__(self)
+        self.attack_threshold = attack_threshold
+
+    def calc_winning_odds(self, my_units, enemy_units):
+        attack_score, defend_score = 0, 0
+        for unit in my_units:
+            attack_score +=(unit.att_success*1/6)
+
+        return attack_score/len(my_units)
+
+    def phase_2(self, game):
+        game.battles = []
+        while len(game.movable) > 0:
+            if r.random() > 0.01:
+                unit = game.movable[0]
+                position = unit.get_position()
+                to_tile = r.choice(game.map.board[position[0]][position[1]].neighbours)
+                if to_tile.owner != game.current_player:
+                    all_units = game.find_movable_in_tile(position)
+                    attack_score = self.calc_winning_odds(all_units, to_tile.units)
+                    if attack_score > self.attack_threshold:
+                        for current_unit in all_units:
+                            game.move_unit(game.map.board[position[0]][position[1]], to_tile, 1, current_unit)
+                else:
+                    game.move_unit(game.map.board[position[0]][position[1]], to_tile, 1, unit)
+            else:
+                break
+        game.phase = 2.5
 

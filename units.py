@@ -1,15 +1,9 @@
-class Unit():
+class Unit:
     def __init__(self, success=1):
         self.success = success
         self.position = None
         self.used_steps = 0
         self.old_position = None
-
-    def action_is_successful(self, x):
-        if x >= self.success:
-            return True
-        else:
-            return False
 
     def get_old_position(self):
 
@@ -51,7 +45,6 @@ class Infantry(Unit):
 
         self.cost = 2
 
-
     def __repr__(self):
         pos = self.get_position()
 
@@ -65,7 +58,7 @@ class Tank(Unit):
         self.type = 'Tank'
         self.owner = owner
         self.att_success = success
-        self.def_success = success
+        self.def_success = success-2
         # self.set_position(position)
         self.cost = 5
 
