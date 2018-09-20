@@ -18,7 +18,7 @@ setup(
 
     packages=[
         'axis_and_allies',
-        'axis_and_allies.map_generator',
+
         'gym_aa',
         'gym_aa.envs'
     ],

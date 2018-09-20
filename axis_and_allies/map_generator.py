@@ -1,5 +1,5 @@
 import numpy as np
-from .tile import Tile
+
 
 
 class MapClass(object):
@@ -41,3 +41,22 @@ class MapClass(object):
                     board[h][w].neighbours.append(board[h][w - 1])
 
         return board
+
+class Tile(object):
+    def __init__(self, cords, name='nameless', water=False):
+        self.owner = None
+
+        self.neighbours = []
+
+        self.cords = cords
+
+        self.units = []
+
+        self.constructions = []
+
+        self.water = water
+
+        self.value = 2
+
+    def __repr__(self):
+        return self.owner.name+self.units.__str__()+self.constructions.__str__()

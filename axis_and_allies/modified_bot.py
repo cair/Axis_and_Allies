@@ -1,7 +1,6 @@
 import random as r
-from units import Infantry, Tank
-
-from .new_bot import Bot
+from axis_and_allies.units import Infantry, Tank
+from axis_and_allies.new_bot import Bot
 
 
 class NewBot(Bot):
