@@ -1,9 +1,9 @@
 import random as r
 import copy
 
-from .map_generator.map_class import MapClass
-from .units import Units as units
-from .buildings import Buildings as buildings
+from axis_and_allies.map_generator import MapClass
+from axis_and_allies import units
+from axis_and_allies.buildings import Buildings as buildings
 
 class GameManager(object):
     def __init__(self):
@@ -324,6 +324,6 @@ class Game():
         return c
 
     def bot(self):
-        from .bots import random_bot, turtle_bot, easy_bot
+        from axis_and_allies.bots import random_bot
         if not self.current_player.human:
             self.current_player.bot.play_bot(self)

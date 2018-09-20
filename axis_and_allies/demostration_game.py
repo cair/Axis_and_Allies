@@ -4,10 +4,10 @@ from PIL import Image
 from pygame.locals import *
 
 
-from .game import Game, GameManager
-from .nation import Nation
-from .modified_bot import NewBot
-from .modified_bot import NewBot2
+from axis_and_allies.game import Game, GameManager
+from axis_and_allies.nation import Nation
+from axis_and_allies.modified_bot import NewBot
+from axis_and_allies.modified_bot import NewBot2
 
 
 def translate_to_array(board, x, y, game):
