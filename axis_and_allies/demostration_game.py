@@ -4,10 +4,10 @@ import numpy as np
 from PIL import Image
 from pygame.locals import *
 
-from nation import Nation
-from game import Game, GameManager
-import new_bot as new_bots
-from modified_bot import NewBot
+from .nation import Nation
+from .game import Game, GameManager
+from .new_bot import Bot
+from .modified_bot import NewBot
 
 def translate_to_array(board, x, y, game):
     new_board = np.zeros((x, y, 3), dtype=np.uint8)
@@ -75,7 +75,7 @@ def with_pauses():
 def without_pauses():
     x, y = 6, 6
 
-    bot = new_bots.Bot()
+    bot = Bot()
     bot2 = NewBot()
     germany = Nation(name='Germany', human=False, difficulty='new_bot', bot=bot2)
     russia = Nation(name='Russia', human=False, difficulty="new_bot", bot=bot)

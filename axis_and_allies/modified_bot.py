@@ -1,7 +1,7 @@
 import random as r
 
 
-from new_bot import Bot
+from .new_bot import Bot
 
 
 class NewBot(Bot):
