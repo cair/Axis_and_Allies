@@ -1,13 +1,13 @@
-
 import pygame
 import numpy as np
 from PIL import Image
 from pygame.locals import *
 
-from nation import Nation
-from game import Game, GameManager
-import new_bot as new_bots
-from modified_bot import NewBot
+
+from .game import Game, GameManager
+from .nation import Nation
+from .modified_bot import NewBot
+from .modified_bot import NewBot2
 
 
 def translate_to_array(board, x, y, game):
@@ -75,7 +75,6 @@ def with_pauses():
 
 def without_pauses():
     x, y = 6, 6
-    from modified_bot import NewBot2
 
     bot = NewBot2(attack_threshold=0.1)
     bot2 = NewBot2(attack_threshold=0.35)

@@ -1,24 +1,5 @@
 import numpy as np
-
-
-class Tile(object):
-    def __init__(self, cords, name='nameless', water=False):
-        self.owner = None
-
-        self.neighbours = []
-
-        self.cords = cords
-
-        self.units = []
-
-        self.constructions = []
-
-        self.water = water
-
-        self.value = 2
-
-    def __repr__(self):
-        return self.owner.name + self.units.__str__() + self.constructions.__str__()
+from .tile import Tile
 
 
 class MapClass(object):
@@ -29,9 +10,9 @@ class MapClass(object):
         # A list of Nations, and how many provinces they should have.
         self.nations = nations
 
-        self.board = self.createBoard()
+        self.board = self.create_board()
 
-    def createBoard(self):
+    def create_board(self):
         board = np.empty(self.size, dtype=Tile)
         number_of_provinces = int((self.size[0] * self.size[1]) / self.nations.__len__())
 
@@ -58,28 +39,5 @@ class MapClass(object):
                     board[h][w].neighbours.append(board[h][w + 1])
                 if w - 1 >= 0:
                     board[h][w].neighbours.append(board[h][w - 1])
-                '''
-                print("h: "+str(h), w)
-                for k in board[h][w].neighbours:
-                    print(k.cords)
-        
-        '''
-        '''
-        for h in range(self.size[0]):
-            for w in range(self.size[1]):
-                if w >= (self.size[1]/(self.nations.__len__())*counter):
-                    counter+=1
-                    #print(counter)
-                board[h][w].owner = self.nations[counter-1][0]
-                #print(board[h][w].owner)
-            counter = 1
 
-        '''
-        # print(board[3][3].owner)
-        '''
-        for h in range(self.size[0]):
-            for w in range(self.size[1]):
-                print(board[h][w].owner, board[h][w].cords)
-        '''
-        # print(board)
         return board
