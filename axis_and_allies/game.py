@@ -312,7 +312,7 @@ class Game():
     def find_movable_in_tile(self, cords):
         units = []
         for unit in self.map.board[cords[0]][cords[1]].units:
-            if unit.used_steps > unit.range:
+            if unit.used_steps < unit.range:
                 units.append(unit)
         return units
 
@@ -324,6 +324,5 @@ class Game():
         return c
 
     def bot(self):
-        from axis_and_allies.bots import random_bot
         if not self.current_player.human:
             self.current_player.bot.play_bot(self)
