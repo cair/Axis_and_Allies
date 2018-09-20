@@ -1,17 +1,11 @@
 class Units:
 
-    class Unit():
+    class Unit:
         def __init__(self, success=1):
             self.success = success
             self.position = None
             self.used_steps = 0
             self.old_position = None
-
-        def action_is_successful(self, x):
-            if x >= self.success:
-                return True
-            else:
-                return False
 
         def get_old_position(self):
 
@@ -39,7 +33,6 @@ class Units:
         def reset(self):
             self.used_steps = 0
 
-
     class Infantry(Unit):
         def __init__(self, owner, success=2):
             super().__init__()
@@ -53,12 +46,10 @@ class Units:
 
             self.cost = 2
 
-
         def __repr__(self):
             pos = self.get_position()
 
             return self.owner.name + "_" + self.type+"_"+str(pos[0])+","+str(pos[1])
-
 
     class Tank(Unit):
         def __init__(self, owner, success=3):
@@ -67,7 +58,7 @@ class Units:
             self.type = 'Tank'
             self.owner = owner
             self.att_success = success
-            self.def_success = success
+            self.def_success = success-2
             # self.set_position(position)
             self.cost = 5
 
@@ -75,4 +66,3 @@ class Units:
             pos = self.get_position()
 
             return self.owner.name + "_" + self.type+"_"+str(pos[0])+","+str(pos[1])
-

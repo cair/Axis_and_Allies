@@ -6,7 +6,7 @@ class Tile(object):
 
         self.cords = cords
 
-        self.units = []#dict()
+        self.units = []
 
         self.constructions = []
 

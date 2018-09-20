@@ -1,7 +1,8 @@
 import gym
 from axis_and_allies.game import Game
 from axis_and_allies.nation import Nation
-
+from axis_and_allies.modified_bot import NewBot
+from axis_and_allies.modified_bot import NewBot2
 
 
 """
@@ -88,8 +89,10 @@ class AxisAndAllies4x4RandomAgent(gym.Env):
     metadata = {'render.modes': ['human']}
 
     def __init__(self):
-        germany = Nation(name='Germany', human=True)
-        russia = Nation(name='Russia', human=False)
+        bot = NewBot2(attack_threshold=0.1)
+        bot2 = NewBot2(attack_threshold=0.35)
+        germany = Nation(name='Germany', human=False, bot=bot)
+        russia = Nation(name='Russia', human=False, bot=bot2)
 
         x, y = 4, 4
 

@@ -102,7 +102,6 @@ class Bot(object):
                 game.battles.remove(game.battles[0])
         game.phase = 3
 
-
     def phase_3(self, game):
         while len(game.movable) > 0:
             if r.random() > 0.5:

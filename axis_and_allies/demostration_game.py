@@ -1,13 +1,14 @@
-
 import pygame
 import numpy as np
 from PIL import Image
 from pygame.locals import *
 
-from .nation import Nation
+
 from .game import Game, GameManager
-from .new_bot import Bot
+from .nation import Nation
 from .modified_bot import NewBot
+from .modified_bot import NewBot2
+
 
 def translate_to_array(board, x, y, game):
     new_board = np.zeros((x, y, 3), dtype=np.uint8)
@@ -75,10 +76,10 @@ def with_pauses():
 def without_pauses():
     x, y = 6, 6
 
-    bot = Bot()
-    bot2 = NewBot()
-    germany = Nation(name='Germany', human=False, difficulty='new_bot', bot=bot2)
-    russia = Nation(name='Russia', human=False, difficulty="new_bot", bot=bot)
+    bot = NewBot2(attack_threshold=0.1)
+    bot2 = NewBot2(attack_threshold=0.35)
+    germany = Nation(name='Germany', human=False, difficulty='new_bot', bot=bot)
+    russia = Nation(name='Russia', human=False, difficulty="new_bot", bot=bot2)
 
     game = Game(size=(x, y), nations=[germany, russia])
 
@@ -87,7 +88,7 @@ def without_pauses():
     width, height = 1024, 768
     screen = pygame.display.set_mode((width, height))
     i = 0
-
+    myfont = pygame.font.SysFont('Comic Sans MS', 30)
     while True:
         game.bot()
         if game.is_there_a_winner():
@@ -107,6 +108,7 @@ def without_pauses():
             img = Image.fromarray(data, 'RGB')
             img = img.resize((1024, 768))
             img = pygame.surfarray.make_surface(np.array(img))
+
             screen.blit(pygame.transform.rotate(img, 90), (0, 0))
             pygame.display.flip()
             pygame.time.wait(50)

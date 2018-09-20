@@ -1,9 +1,9 @@
-from .map_generator.map_class import MapClass
-from .units import Units as units
-from .buildings import Buildings as buildings
 import random as r
 import copy
 
+from .map_generator.map_class import MapClass
+from .units import Units as units
+from .buildings import Buildings as buildings
 
 class GameManager(object):
     def __init__(self):
@@ -326,11 +326,4 @@ class Game():
     def bot(self):
         from .bots import random_bot, turtle_bot, easy_bot
         if not self.current_player.human:
-            if self.current_player.difficulty == "Random":
-                random_bot(self)
-            elif self.current_player.difficulty == "Turtle":
-                turtle_bot(self)
-            elif self.current_player.difficulty == "Easy":
-                easy_bot()
-            elif self.current_player.difficulty == "new_bot":
-                self.current_player.bot.play_bot(self)
+            self.current_player.bot.play_bot(self)
