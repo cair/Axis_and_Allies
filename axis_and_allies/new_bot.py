@@ -66,8 +66,6 @@ class Bot(object):
         for key in to_be_deleted:
             game.take_casualties(to_be_deleted, to_be_deleted[key][0].type, len(to_be_deleted[key]))
 
-        return NotImplementedError
-
     def combat_phase(self, game):
         while len(game.battles) > 0:
             results = game.do_battle(game.battles[0])
@@ -144,5 +142,3 @@ class Bot(object):
                 print(game.map.board)
             else:
                 game.next_phase()
-
-

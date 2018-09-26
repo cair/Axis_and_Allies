@@ -156,3 +156,57 @@ class NewBot2(NewBot):
                 break
         game.phase = 2.5
 
+
+class NewBot3(NewBot2):
+    def __init__(self):
+        Bot.__init__(self)
+
+    def phase_2(self, game):
+        game.battles = []
+        # Locate enemy industry
+        target_tile = None
+        for w in game.map.board:
+            for h in w:
+                if len(h.constructions) > 0 and h.owner.name is not game.current_player.name:
+                    target_tile = h
+
+        if target_tile is not None:
+            while len(game.movable) > 0:
+                unit = game.movable[0]
+                position = unit.get_position()
+                new_tile = (-1, None)
+                possible_tiles = []
+                for tile in game.map.board[position[0]][position[1]].neighbours:
+                    value = self.calculate_distance_between_tiles(tile, target_tile)
+                    if new_tile[0] > value or new_tile[1] is None:
+                        new_tile = (value, tile)
+                        if value == 0:
+                            possible_tiles.append(tile)
+                if new_tile[0] == 0:
+                    min_units = (-1, None)
+                    for tile in possible_tiles:
+                        if len(tile.units) < min_units[0] or min_units[1] is None:
+                            min_units = (len(tile.units), tile)
+                    game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], 1, unit)
+                elif new_tile[0] == -1:
+                    game.movable.remove(game.movable[0])
+                elif new_tile[1] is not None:
+                    game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], 1, unit)
+
+        elif target_tile is None:
+            while len(game.movable) > 0:
+                if r.random() > 0.01:
+                    unit = game.movable[0]
+                    position = unit.get_position()
+                    to_tile = r.choice(game.map.board[position[0]][position[1]].neighbours)
+                    if to_tile.owner != game.current_player:
+                        all_units = game.find_movable_in_tile(position)
+                        attack_score = self.calc_winning_odds(all_units, to_tile.units)
+                        if attack_score > 0.15:
+                            for current_unit in all_units:
+                                game.move_unit(game.map.board[position[0]][position[1]], to_tile, 1, current_unit)
+                    else:
+                        game.move_unit(game.map.board[position[0]][position[1]], to_tile, 1, unit)
+                else:
+                    break
+        game.phase = 2.5
