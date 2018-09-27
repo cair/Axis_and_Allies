@@ -5,6 +5,7 @@ from axis_and_allies.map_generator import MapClass
 from axis_and_allies import units
 from axis_and_allies.buildings import Buildings as buildings
 
+
 class GameManager(object):
     def __init__(self):
 
@@ -24,7 +25,7 @@ class GameManager(object):
             return None
 
 
-class Game():
+class Game:
     def __init__(self, size, nations):
         self.map = MapClass(size, nations)
         self.nations = nations
@@ -74,7 +75,6 @@ class Game():
         # All the way to the left
         tile = self.map.board[int(self.map.board.__len__() / 2) - 1][0]
         tile.constructions.append(buildings.Industry(owner=tile.owner))
-        print(self.map.board.__len__())
         # All the way to the right
         tile = self.map.board[int(self.map.board.__len__() / 2) - 1][self.map.board.__len__() - 1]
         tile.constructions.append(buildings.Industry(owner=tile.owner))
@@ -83,6 +83,10 @@ class Game():
         return self.nations[n:] + self.nations[:n]
 
     def find_deployable_places(self):
+        """
+        This function iterates over the board, and find places where the current player has industry.
+        :return: a list of deployable places
+        """
         deployable_places = []
         for w in self.map.board:
             for h in w:
@@ -94,6 +98,10 @@ class Game():
         return deployable_places
 
     def valid_board(self):
+        """
+        This function checks if the board is valid ( no battle zones, after the turn is over)
+        :return:
+        """
         for w in self.map.board:
             for h in w:
                 for unit in h.units:
@@ -102,6 +110,9 @@ class Game():
         return True, -1
 
     def calculate_purchase_units(self):
+        """
+        :return: The current players purchase_units.
+        """
         purchase_units = 0
         for w in self.map.board:
             for h in w:
@@ -140,6 +151,12 @@ class Game():
         return rtr
 
     def recruit_unit(self, n):
+        """
+        This function is used to purchase units.
+        :param n: is the id for unit
+        :return: nothing. Adds the purchased unit to the purchases dict.
+        """
+        unit = None
         if n == 0:
             unit = units.Infantry(self.current_player)
         elif n == 1:
@@ -148,9 +165,17 @@ class Game():
         if self.current_player not in self.purchases:
             self.purchases[self.current_player] = []
 
-        self.purchases[self.current_player].append(unit)
+        if unit is not None:
+            self.purchases[self.current_player].append(unit)
+        else:
+            print("Invalid unit number")
 
     def init_turn(self):
+        """
+        This function is used to init the round, for each player.
+        :return:
+        """
+
         self.deployable_places = self.calculate_purchase_units()
         self.purchase_units = self.calculate_purchase_units()
         self.battles = []
@@ -201,6 +226,10 @@ class Game():
                 d += 1
 
     def reset_all_units(self):
+        """
+        Used to reset the 'walked' variable on the units.
+        :return:
+        """
         for h in self.map.board:
             for w in h:
                 for unit in w.units:
@@ -221,6 +250,13 @@ class Game():
         return r.randint(1, n)
 
     def do_battle(self, cords):
+        """
+        This function performs a battle given a some cords.
+        It starts by seperating the attacking and defending units.
+        Then calculates the number of hits the two must 'take'.
+        :param cords:
+        :return:
+        """
         attacking = dict()
         defending = dict()
         for unit in self.map.board[cords[0]][cords[1]].units:
@@ -264,7 +300,7 @@ class Game():
         total = 0
         for w in self.map.board:
             for h in w:
-                total += h.units.__len__()
+                total += len(h.units)
         return total
 
     def delete_unit(self, units):
@@ -319,8 +355,8 @@ class Game():
     def find_unit_count(self, units):
         c = 0
         for key in units:
-            for unit in units[key]:
-                c += 1
+            c += len(units[key])
+
         return c
 
     def bot(self):

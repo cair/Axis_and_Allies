@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 class MapClass(object):
     def __init__(self, size, nations):
 
