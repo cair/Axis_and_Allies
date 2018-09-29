@@ -1,60 +1,15 @@
 import random as r
-from axis_and_allies.units import Infantry, Tank
-from axis_and_allies.new_bot import Bot
 
+from axis_and_allies.units import Infantry, Tank
+from axis_and_allies.bot import Bot
+from axis_and_allies.game import Game
 
 class NewBot(Bot):
-    '''def phase_1(self, game):
-        """
-        This bot will only produce inf
-        """
-        used = 0
-        while True:
-            pos = game.recruitable(game.purchase_units - used)
-            if pos.__len__() == 0:
-                game.next_phase()
-                break
-            game.recruit_unit(0)
-            used += pos[0]
     '''
-    def calculate_distance_between_tiles(self, tile_1, tile_2):
-        x, y = tile_1.cords[0], tile_1.cords[1]
-        x2, y2 = tile_2.cords[0], tile_2.cords[1]
-
-        return abs(x-x2)+abs(y-y2)
-
-
+    Read in bot.py for instructions about the different phases.
     '''
-    def phase_2(self, game):
-        """
-        Forces the bot to attack if possible, otherwise towards the border.
-        """
-        game.battles = []
-        while game.movable.__len__() > 0:
-            if r.random() > 0.1:
-                unit = game.movable[0]
-                position = unit.get_position()
-                hit = False
-                for tile in game.map.board[position[0]][position[1]].neighbours:
-                    if tile.owner != game.current_player:
-                        self.moved[tile.cords.__str__()] = position
-                        game.move_unit(game.map.board[position[0]][position[1]], tile, 1, unit)
-                        hit = True
-                        break
-                if not hit:
-                    new_tile = (9999, None)
-                    for tile in game.map.board[position[0]][position[1]].neighbours:
-                        for border_tile in game.border_tiles:
-                            value = self.calculate_distance_between_tiles(tile, border_tile)
-                            if new_tile[0] > value:
-                                new_tile = (value, tile)
-                    if new_tile[1] is not None:
-                        game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], 1, unit)
-            else:
-                break
-        game.phase = 2.5
-    '''
-    def phase_3(self, game):
+
+    def non_combat_movement_phase(self, game: Game):
         """
         This will force the bot to always advance towards the enemy
         In the non-combat moving phase.
@@ -68,7 +23,7 @@ class NewBot(Bot):
             for tile in game.map.board[position[0]][position[1]].neighbours:
                 if tile.owner == unit.owner:
                     for border_tile in game.border_tiles:
-                        value = self.calculate_distance_between_tiles(tile, border_tile)
+                        value = game.calculate_distance_between_tiles(tile, border_tile)
                         if new_tile[0] > value or new_tile[1] is None:
                             new_tile = (value, tile)
                             if value == 0:
@@ -78,14 +33,14 @@ class NewBot(Bot):
                 for tile in possible_tiles:
                     if len(tile.units) < min_units[0] or min_units[1] is None:
                         min_units = (len(tile.units), tile)
-                game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], 1, unit)
+                game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], unit)
             elif new_tile[0] == -1:
                 game.movable.remove(game.movable[0])
             elif new_tile[1] is not None:
-                game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], 1, unit)
+                game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], unit)
         game.next_phase()
 
-    def prioritize_casualties(self, game, values):
+    def prioritize_casualties(self, game: Game, values):
         """
         This bot will prioritize to delete infs over tanks.
         """
@@ -137,7 +92,16 @@ class NewBot2(NewBot):
 
         return attack_score/len(my_units)
 
-    def phase_2(self, game):
+    def moving_phase(self, game: Game)-> None:
+        '''
+        This function will calculate the odds of winning the battle,
+        if the chance is greater than the threshold defined, it will attack.
+
+
+
+        :param game: Is the object of the game that contains the map, units etc..
+
+        '''
         game.battles = []
         while len(game.movable) > 0:
             if r.random() > 0.01:
@@ -149,9 +113,9 @@ class NewBot2(NewBot):
                     attack_score = self.calc_winning_odds(all_units, to_tile.units)
                     if attack_score > self.attack_threshold:
                         for current_unit in all_units:
-                            game.move_unit(game.map.board[position[0]][position[1]], to_tile, 1, current_unit)
+                            game.move_unit(game.map.board[position[0]][position[1]], to_tile, current_unit)
                 else:
-                    game.move_unit(game.map.board[position[0]][position[1]], to_tile, 1, unit)
+                    game.move_unit(game.map.board[position[0]][position[1]], to_tile, unit)
             else:
                 break
         game.phase = 2.5
@@ -161,7 +125,13 @@ class NewBot3(NewBot2):
     def __init__(self):
         Bot.__init__(self)
 
-    def phase_2(self, game):
+    def moving_phase(self, game: Game):
+        '''
+        This function would make the bot always move towards the enemy industry in an attempt to capture it, and then
+        'starve' them of units.
+        :param game: Is the object of the game that contains the map, units etc..
+        :return:
+        '''
         game.battles = []
         # Locate enemy industry
         target_tile = None
@@ -177,7 +147,7 @@ class NewBot3(NewBot2):
                 new_tile = (-1, None)
                 possible_tiles = []
                 for tile in game.map.board[position[0]][position[1]].neighbours:
-                    value = self.calculate_distance_between_tiles(tile, target_tile)
+                    value = game.calculate_distance_between_tiles(tile, target_tile)
                     if new_tile[0] > value or new_tile[1] is None:
                         new_tile = (value, tile)
                         if value == 0:
@@ -187,11 +157,11 @@ class NewBot3(NewBot2):
                     for tile in possible_tiles:
                         if len(tile.units) < min_units[0] or min_units[1] is None:
                             min_units = (len(tile.units), tile)
-                    game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], 1, unit)
+                    game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], unit)
                 elif new_tile[0] == -1:
                     game.movable.remove(game.movable[0])
                 elif new_tile[1] is not None:
-                    game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], 1, unit)
+                    game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], unit)
 
         elif target_tile is None:
             while len(game.movable) > 0:
@@ -204,9 +174,9 @@ class NewBot3(NewBot2):
                         attack_score = self.calc_winning_odds(all_units, to_tile.units)
                         if attack_score > 0.15:
                             for current_unit in all_units:
-                                game.move_unit(game.map.board[position[0]][position[1]], to_tile, 1, current_unit)
+                                game.move_unit(game.map.board[position[0]][position[1]], to_tile, current_unit)
                     else:
-                        game.move_unit(game.map.board[position[0]][position[1]], to_tile, 1, unit)
+                        game.move_unit(game.map.board[position[0]][position[1]], to_tile, unit)
                 else:
                     break
         game.phase = 2.5

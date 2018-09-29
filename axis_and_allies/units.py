@@ -32,13 +32,13 @@ class Unit:
     def reset(self):
         self.used_steps = 0
 
+
 class Infantry(Unit):
     def __init__(self, owner, success=2):
         super().__init__()
         self.range = 1
         self.owner = owner
         self.type = 'Inf'
-        # self.set_position(position)
         self.att_success = success - 1
         self.def_success = success
         self.attachment = []
@@ -50,6 +50,7 @@ class Infantry(Unit):
 
         return self.owner.name + "_" + self.type+"_"+str(pos[0])+","+str(pos[1])
 
+
 class Tank(Unit):
     def __init__(self, owner, success=3):
         super().__init__()
@@ -58,7 +59,6 @@ class Tank(Unit):
         self.owner = owner
         self.att_success = success
         self.def_success = success-2
-        # self.set_position(position)
         self.cost = 5
 
     def __repr__(self):

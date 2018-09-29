@@ -27,15 +27,16 @@ class GameManager(object):
 
 class Game:
     def __init__(self, size, nations):
+        self.size = size
         self.map = MapClass(size, nations)
         self.nations = nations
-        self.start_player = nations[0]
+        self.start_player = r.choice(self.nations)
         self.current_player = self.start_player
         self.terminal = False
         self.turn = 0
         self.phase = 0
         self.purchases = dict()
-        self.purchase_units = None  # self.calculate_purchase_units()
+        self.purchase_units = None
         self.deployable_places = None
         self.border_tiles = self.calculate_border()
         self.starting_conditions(n=2)
@@ -45,6 +46,10 @@ class Game:
         self.history = []
 
     def calculate_border(self):
+        '''
+        This function returns the border between two nations.
+        :return: border_tiles, a list of the tiles.
+        '''
         border_tiles = []
         for w in self.map.board:
             last = None
@@ -57,12 +62,23 @@ class Game:
         return border_tiles
 
     def phase_0(self):
+        '''
+        This function does things that has to be done each round.
+        1. Calculates which units that are allowed to move this round.
+        2. Finds the tile(s) where one is allowed to deploy units (industry tiles)
+        3. Calculates how many 'PCUs' the current player has.
+        '''
         self.movable_units()
         self.deployable_places = self.find_deployable_places()
-        self.next_phase()
         self.purchase_units = self.calculate_purchase_units()
+        self.next_phase()
 
     def starting_conditions(self, n):
+        '''
+        This function gives the starting conditions for the game.
+        The parameter n decides how many of each unit type the players are given.
+        This also places the industry of the two players in opposite corners.
+        '''
         for tile in self.border_tiles:
             for i in range(n):
                 inf_unit = units.Infantry(owner=tile.owner)
@@ -133,7 +149,7 @@ class Game:
         return self.turn
 
     def next_phase(self):
-        if self.phase == 5:
+        if self.phase == 4:
             self.next_turn()
         else:
             self.phase += 1
@@ -143,12 +159,17 @@ class Game:
 
         return self.phase
 
-    def recruitable(self, n):
-        rtr = []
-        for pos in self.recruitable_list:
-            if pos < n:
-                rtr.append(pos)
-        return rtr
+    def recruitable(self, purchase_units):
+        '''
+        This function is used to calculate which type of units you are allowed to recruit.
+        :param purchase_units:
+        :return: A list of the cost associated to the units.
+        '''
+        recruitable = []
+        for unit_cost in self.recruitable_list:
+            if unit_cost < purchase_units:
+                recruitable.append(unit_cost)
+        return recruitable
 
     def recruit_unit(self, n):
         """
@@ -183,47 +204,47 @@ class Game:
     def conquer_tile(self, tile, new_owner):
         tile.owner = new_owner
 
-    def move_unit(self, from_tile, to_tile, n, unit):
-        d = 0
-        while True:
-            if d == n:
-                break
-            delta_x = abs(from_tile.cords[0] - to_tile.cords[0])
-            delta_y = abs(from_tile.cords[1] - to_tile.cords[1])
-            # todo add is legal function instead.
-            if delta_x + delta_y <= unit.range:
-                if to_tile.owner != self.current_player:
-                    if unit.used_steps == 0:
-                        unit.set_step(unit.range)
-                    else:
-                        unit.set_step(delta_x + delta_y)
+    def move_unit(self, from_tile, to_tile, unit):
+        '''
+        This function is used to move a unit from a tile to another.
+        :param from_tile: Starting tile
+        :param to_tile: End tile
+        :param unit: The unit that is supposed to be moved.
+        :return:
+        '''
 
-                    if to_tile.units.__len__() == 0:
-                        self.conquer_tile(to_tile, self.current_player)
-                    elif not self.battles.__contains__(to_tile.cords):
-                        self.battles.append(to_tile.cords)
+        delta_x = abs(from_tile.cords[0] - to_tile.cords[0])
+        delta_y = abs(from_tile.cords[1] - to_tile.cords[1])
+        # todo add is legal function instead.
+        if delta_x + delta_y <= unit.range:
+            if to_tile.owner != self.current_player:
+                if unit.used_steps == 0:
+                    unit.set_step(unit.range)
                 else:
-                    unit.set_step(delta_y + delta_x)
+                    unit.set_step(delta_x + delta_y)
 
-                unit.set_position(to_tile.cords)
-                unit.set_old_position(from_tile.cords)
-                if unit.used_steps == unit.range:
-                    try:
-                        self.movable.remove(unit)
-                    except ValueError:
-                        print(ValueError.args)
+                # If the tile you enter is empty, it is conquered.
+                if len(to_tile.units) == 0:
+                    self.conquer_tile(to_tile, self.current_player)
+                # If not, there will be a battle there.
+                elif to_tile.cords not in self.battles:
+                    self.battles.append(to_tile.cords)
+            else:
+                # The unit has travelled the distance.
+                unit.set_step(delta_y + delta_x)
 
-                to_tile.units.append(unit)
-                from_tile.units.remove(unit)
-                if self.battles.__contains__(from_tile.cords):
-                    valid = False
-                    for unit in from_tile.units:
-                        if unit.owner == self.current_player:
-                            valid = True
-                            break
-                    if not valid:
-                        self.battles.remove(from_tile.cords)
-                d += 1
+            unit.set_position(to_tile.cords)
+            unit.set_old_position(from_tile.cords)
+            # If the unit has travelled a distance which is equal to its range.
+            if unit.used_steps == unit.range:
+                try:
+                    self.movable.remove(unit)
+                except ValueError:
+                    print(ValueError.args)
+
+            # The actual moving of the unit.
+            to_tile.units.append(unit)
+            from_tile.units.remove(unit)
 
     def reset_all_units(self):
         """
@@ -252,10 +273,13 @@ class Game:
     def do_battle(self, cords):
         """
         This function performs a battle given a some cords.
-        It starts by seperating the attacking and defending units.
+        It starts by separating the attacking and defending units.
         Then calculates the number of hits the two must 'take'.
+        The hits are calculated based on the dice roll, and the unit's success criterion.
         :param cords:
         :return:
+        Two tuples, where the first one contains the attacking unit(s) (dict), and how many hits the attacker has to take.
+        the second is the defender unit(s) (dict) and how many hits the defender has to take.
         """
         attacking = dict()
         defending = dict()
@@ -272,7 +296,6 @@ class Game:
         for key in attacking:
             for unit in attacking[key]:
                 dice = self.get_dice()
-                # print(unit)
                 if dice <= unit.att_success:
                     a_hits += 1
         d_hits = 0
@@ -285,18 +308,26 @@ class Game:
         return (attacking, d_hits), (defending, a_hits)
 
     def calculate_individual_units(self):
+        '''
+        This function is used to calculate how many units the nations has.
+        :return: A dict where the nation name is the key.
+        '''
         dict_of_nations = dict()
         for nation in self.nations:
             total = 0
             for w in self.map.board:
                 for h in w:
                     if h.owner == nation:
-                        total += h.units.__len__()
-            dict_of_nations[nation] = total
+                        total += len(h.units)
+            dict_of_nations[nation.name] = total
 
         return dict_of_nations
 
     def calculate_units(self):
+        '''
+        This function is used to calculate the total amount of units in the game.
+        :return: The amount.
+        '''
         total = 0
         for w in self.map.board:
             for h in w:
@@ -313,6 +344,9 @@ class Game:
         return True
 
     def movable_units(self):
+        '''
+        This function is used to calculate how many units that are movable.
+        '''
         movable = []
         for h in self.map.board:
             for w in h:
@@ -337,22 +371,67 @@ class Game:
 
         self.delete_unit(to_be_deleted)
 
+    def calculate_distance_between_tiles(self, tile_1, tile_2):
+        '''
+        This function is used to calculate the distance between two tiles.
+        :param tile_1:
+        :param tile_2:
+        :return:
+        '''
+        x, y = tile_1.cords[0], tile_1.cords[1]
+        x2, y2 = tile_2.cords[0], tile_2.cords[1]
+
+        return abs(x - x2) + abs(y - y2)
+
     def is_there_a_winner(self):
-        winner = True
-        for w in self.map.board:
-            for h in w:
-                if h.owner != self.current_player:
-                    winner = False
-        return winner
+        '''
+        This is the function used to calculate the winner of the game.
+        There are two ways of winning the game.
+        1. Conquer all the tiles.
+        2. Have the most tiles at turn 25.
+        :return: bool, and if the game is over which nation that won.
+        '''
+        if self.turn == 25:
+            tile_dict = {}
+            for w in self.map.board:
+                for h in w:
+                    if h.owner.name not in tile_dict:
+                        tile_dict[h.owner] = 0
+                    tile_dict[h.owner] += 1 /(self.size[0] * self.size[1])
+
+            biggest = (0, None)
+            for nation in tile_dict:
+                if tile_dict[nation] > biggest[0]:
+                    biggest = (tile_dict[nation], nation)
+            return True, biggest[1]
+
+        else:
+            winner = True
+            for w in self.map.board:
+                for h in w:
+                    if h.owner != self.current_player:
+                        winner = False
+            return winner, self.current_player
 
     def find_movable_in_tile(self, cords):
+        '''
+        Finds movable units in a specific tile.
+        :param cords: The coordinates of the specific tile.
+        :return:
+        '''
         units = []
         for unit in self.map.board[cords[0]][cords[1]].units:
             if unit.used_steps < unit.range:
                 units.append(unit)
         return units
 
-    def find_unit_count(self, units):
+    def find_unit_count(self, units: dict)-> int:
+        '''
+        this function summerizes the number of units in a dict. i.e {'inf' : [inf, inf, inf, inf], 'tank': [tank, tank, tank, tank}
+        is equal to 8.
+        :param units: A dict of with units
+        :return: The amount of units.
+        '''
         c = 0
         for key in units:
             c += len(units[key])
