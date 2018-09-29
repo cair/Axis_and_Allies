@@ -79,7 +79,7 @@ def without_graphics():
     bot = Bot()
     bot2 = Bot()
     bot = NewBot2(attack_threshold=0.12)
-    bot2 = NewBot2(attack_threshold=0.10)
+    #bot2 = NewBot2(attack_threshold=0.10)
     germany = Nation(name='Germany', bot=bot)
     russia = Nation(name='Russia', bot=bot2)
     results = {}

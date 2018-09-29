@@ -33,11 +33,11 @@ class NewBot(Bot):
                 for tile in possible_tiles:
                     if len(tile.units) < min_units[0] or min_units[1] is None:
                         min_units = (len(tile.units), tile)
-                game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], unit)
+                game.move_unit_friendly(game.map.board[position[0]][position[1]], new_tile[1], unit)
             elif new_tile[0] == -1:
                 game.movable.remove(game.movable[0])
             elif new_tile[1] is not None:
-                game.move_unit(game.map.board[position[0]][position[1]], new_tile[1], unit)
+                game.move_unit_friendly(game.map.board[position[0]][position[1]], new_tile[1], unit)
         game.next_phase()
 
     def prioritize_casualties(self, game: Game, values):

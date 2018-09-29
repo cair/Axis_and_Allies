@@ -45,6 +45,38 @@ class Game:
         self.recruitable_list = [2, 5]
         self.history = []
 
+    def follow_these(self):
+        '''
+        Some rules. Pls.
+        :return:
+        '''
+        print('\n\n')
+        print('1. Do not change anything in the initialization phase.')
+        print('2. In the purchase phase, you are ONLY allowed to purchase units. This is done with the help of game.recruit_unit')
+        print('3. In the movement phase, you are ONLY allowed to move units with the help of game.move_unit')
+        print('4. In the battle phase, you guessed it, you are ONLY allowed to do battling with game.do_battle')
+        print('5. In the placement phase, you are ONLY allowed to place units that already is in game.purchases')
+        print('\n\n')
+
+    def what_is_allowed(self):
+        '''
+        This function is used to give a overview over what kind of functions that can be used in the current phase.
+        '''
+        allowed = [self.next_phase]
+        if self.phase == 1:
+            allowed += [self.recruit_unit, self.recruitable]
+
+        elif self.phase == 2:
+            allowed.append(self.move_unit)
+
+        elif self.phase == 2.5:
+            allowed += [self.do_battle, self.take_casualties]
+
+        elif self.phase == 3:
+            allowed.append(self.move_unit_friendly)
+
+        return allowed
+
     def calculate_border(self):
         '''
         This function returns the border between two nations.
@@ -159,29 +191,30 @@ class Game:
 
         return self.phase
 
-    def recruitable(self, purchase_units):
+    def recruitable(self):
         '''
         This function is used to calculate which type of units you are allowed to recruit.
-        :param purchase_units:
         :return: A list of the cost associated to the units.
         '''
         recruitable = []
         for unit_cost in self.recruitable_list:
-            if unit_cost < purchase_units:
+            if unit_cost < self.purchase_units:
                 recruitable.append(unit_cost)
         return recruitable
 
-    def recruit_unit(self, n):
+    def recruit_unit(self, unit_id):
         """
         This function is used to purchase units.
-        :param n: is the id for unit
+        :param unit_id: is the id for unit
         :return: nothing. Adds the purchased unit to the purchases dict.
         """
         unit = None
-        if n == 0:
+        if unit_id == 0:
             unit = units.Infantry(self.current_player)
-        elif n == 1:
+        elif unit_id == 1:
             unit = units.Tank(self.current_player)
+
+        self.purchase_units -= unit.cost
 
         if self.current_player not in self.purchases:
             self.purchases[self.current_player] = []
@@ -203,6 +236,51 @@ class Game:
 
     def conquer_tile(self, tile, new_owner):
         tile.owner = new_owner
+
+    def move_unit_friendly(self, from_tile, to_tile, unit):
+        '''
+        This function is used to move a unit from a tile to another.
+        :param from_tile: Starting tile
+        :param to_tile: End tile
+        :param unit: The unit that is supposed to be moved.
+        :return:
+        '''
+        if to_tile.owner is not self.current_player:
+            return False
+
+        delta_x = abs(from_tile.cords[0] - to_tile.cords[0])
+        delta_y = abs(from_tile.cords[1] - to_tile.cords[1])
+        # todo add is legal function instead.
+        if delta_x + delta_y <= unit.range:
+            if to_tile.owner != self.current_player:
+                if unit.used_steps == 0:
+                    unit.set_step(unit.range)
+                else:
+                    unit.set_step(delta_x + delta_y)
+
+                # If the tile you enter is empty, it is conquered.
+                if len(to_tile.units) == 0:
+                    self.conquer_tile(to_tile, self.current_player)
+                # If not, there will be a battle there.
+                elif to_tile.cords not in self.battles:
+                    self.battles.append(to_tile.cords)
+            else:
+                # The unit has travelled the distance.
+                unit.set_step(delta_y + delta_x)
+
+            unit.set_position(to_tile.cords)
+            unit.set_old_position(from_tile.cords)
+            # If the unit has travelled a distance which is equal to its range.
+            if unit.used_steps == unit.range:
+                try:
+                    self.movable.remove(unit)
+                except ValueError:
+                    print(ValueError.args)
+
+            # The actual moving of the unit.
+            to_tile.units.append(unit)
+            from_tile.units.remove(unit)
+        return True
 
     def move_unit(self, from_tile, to_tile, unit):
         '''
@@ -245,6 +323,7 @@ class Game:
             # The actual moving of the unit.
             to_tile.units.append(unit)
             from_tile.units.remove(unit)
+        return True
 
     def reset_all_units(self):
         """

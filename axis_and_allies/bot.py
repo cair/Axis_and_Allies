@@ -38,15 +38,13 @@ class Bot(object):
         In this phase, one should only buy units. The purchased units are placed into game.purchases.
         :param game: Is the object of the game that contains the map, units etc..
         '''
-        used = 0
         while True:
-            possible = game.recruitable(game.purchase_units - used)
+            possible = game.recruitable()
             if len(possible) == 0:
                 game.next_phase()
                 break
             choice = r.randint(0, len(possible) - 1)
             game.recruit_unit(choice)
-            used += possible[choice]
 
     def moving_phase(self, game: Game):
         '''
@@ -154,12 +152,12 @@ class Bot(object):
                     break
                 to_tile = r.choice(possible)
                 if to_tile.owner == game.current_player:
-                    game.move_unit(game.map.board[pos[0]][pos[1]], to_tile, unit)
+                    game.move_unit_friendly(game.map.board[pos[0]][pos[1]], to_tile, unit)
             else:
                 break
         game.next_phase()
 
-    def unit_placement_phase(self, game: Game)-> None:
+    def unit_placement_phase(self, game: Game):
         '''
         This is the phase where one is to place the units purchased in the purchasing phase.
         One is only allowed to place units in a tile where there is industry.
