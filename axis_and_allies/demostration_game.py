@@ -28,7 +28,7 @@ def translate_to_array(board, x, y, game):
 
 
 def with_pauses():
-    x, y = 8, 8
+    x, y = 5, 5
 
     germany = Nation(name='Germany', human=False)
     russia = Nation(name='Russia', human=False, difficulty="Easy")
@@ -75,10 +75,10 @@ def with_pauses():
 
 
 def without_graphics():
-    x, y = 4, 4
+    x, y = 6, 6
     bot = Bot()
     bot2 = Bot()
-    #bot = NewBot2(attack_threshold=0.10)
+    bot = NewBot2(attack_threshold=0.10)
     #bot2 = NewBot2(attack_threshold=0.125)#NewBot3()
     germany = Nation(name='Germany', human=False, difficulty='new_bot', bot=bot)
     russia = Nation(name='Russia', human=False, difficulty="new_bot", bot=bot2)
@@ -146,6 +146,6 @@ def without_pauses():
         i += 1
 
 
-# with_pauses()
+with_pauses()
 #without_pauses()
-without_graphics()
+#without_graphics()
