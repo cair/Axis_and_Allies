@@ -7,7 +7,7 @@ from pygame.locals import *
 from axis_and_allies.game import Game, GameManager
 from axis_and_allies.nation import Nation
 from axis_and_allies.modified_bot import NewBot
-from axis_and_allies.new_bot import Bot
+from axis_and_allies.bot import Bot
 from axis_and_allies.modified_bot import NewBot2
 
 
@@ -30,8 +30,8 @@ def translate_to_array(board, x, y, game):
 def with_pauses():
     x, y = 5, 5
 
-    germany = Nation(name='Germany', human=False)
-    russia = Nation(name='Russia', human=False, difficulty="Easy")
+    germany = Nation(name='Germany')
+    russia = Nation(name='Russia')
     game = Game(size=(x, y), nations=[germany, russia])
 
     game_manager = GameManager()
@@ -75,42 +75,44 @@ def with_pauses():
 
 
 def without_graphics():
-    x, y = 6, 6
+    x, y = 5, 6
     bot = Bot()
     bot2 = Bot()
-    bot = NewBot2(attack_threshold=0.10)
-    #bot2 = NewBot2(attack_threshold=0.125)#NewBot3()
-    germany = Nation(name='Germany', human=False, difficulty='new_bot', bot=bot)
-    russia = Nation(name='Russia', human=False, difficulty="new_bot", bot=bot2)
+    bot = NewBot2(attack_threshold=0.12)
+    #bot2 = NewBot2(attack_threshold=0.10)
+    germany = Nation(name='Germany', bot=bot)
+    russia = Nation(name='Russia', bot=bot2)
+
     results = {}
     number_of_rounds = 100
     for i in range(0, number_of_rounds):
         game = Game(size=(x, y), nations=[germany, russia])
         while True:
             game.bot()
-            if game.is_there_a_winner():
+            is_there_a_winner, winner = game.is_there_a_winner()
+            if is_there_a_winner:
                 if 'winner' not in results:
                     results['winner'] = {}
                     results['avg_rounds'] = {}
 
-                if game.current_player not in results['winner']:
-                    results['winner'][game.current_player] = 0
-                    results['avg_rounds'][game.current_player] = 0
+                if winner not in results['winner']:
+                    results['winner'][winner] = 0
+                    results['avg_rounds'][winner] = 0
 
-                results['winner'][game.current_player] +=1
-                results['avg_rounds'][game.current_player] += game.turn/number_of_rounds
+                results['winner'][winner] +=1
+                results['avg_rounds'][winner] += game.turn/number_of_rounds
                 break
     print(results)
 
 
 def without_pauses():
-    x, y = 6, 6
+    x, y = 5, 6
     bot = Bot()
     bot2 = Bot()
     bot = NewBot2(attack_threshold=0.10)
     #bot2 = NewBot2(attack_threshold=0.20)#NewBot3()
-    germany = Nation(name='Germany', human=False, difficulty='new_bot', bot=bot)
-    russia = Nation(name='Russia', human=False, difficulty="new_bot", bot=bot2)
+    germany = Nation(name='Germany', bot=bot)
+    russia = Nation(name='Russia', bot=bot2)
 
     game = Game(size=(x, y), nations=[germany, russia])
 
@@ -121,8 +123,9 @@ def without_pauses():
     i = 0
     while True:
         game.bot()
-        if game.is_there_a_winner():
-            print(game.current_player)
+        is_there_a_winner, winner = game.is_there_a_winner()
+        if is_there_a_winner:
+            print(winner)
             screen.fill(0)
             data = translate_to_array(game.map.board, x, y, game)
             img = Image.fromarray(data, 'RGB')
@@ -146,6 +149,6 @@ def without_pauses():
         i += 1
 
 
-with_pauses()
+#with_pauses()
 #without_pauses()
-#without_graphics()
+without_graphics()
