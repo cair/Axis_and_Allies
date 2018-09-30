@@ -55,4 +55,57 @@
     </div>
 </script>
 
-<div id="fine-uploader-validation"></div>
+
+<h3>Submission Panel</h3>
+<div class="row">
+<div class="col-12">
+    <input type="text" class="input input-md" name="submission_id" placeholder="Your Submission ID (Example: 123456789)" ng-model="vm.submission_id" ng-change="vm.on_submission_id_change()">
+    <button class="btn btn-md btn-info" ng-click="vm.submission_id=vm.generate_id();vm.on_submission_id_change()">Generate Upload ID</button>
+</div>
+</div>
+
+
+
+<div ng-show="vm.submission_id.length == vm.id_length">
+
+    <div class="row" ng-show="vm.submission_files.length != 0">
+        <div class="col-12">
+            <button ng-click="vm.delete_submission('files');">Delete Python Files</button>
+            <button ng-click="vm.delete_submission('submission');">Delete Submission</button>
+            <button>Run Tournament</button>
+            <button ng-click="vm.save_manifest()">Save Manifest</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <table class="table table-striped" ng-show="vm.submission_files.length != 0">
+                <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Last edited</th>
+                    <th>Size (bytes)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in vm.submission_files">
+                    <td>{{item.filename}}</td>
+                    <td>{{item.last_edited * 1000 | date:'medium'}}</td>
+                    <td>{{item.size}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-6">
+            <div id="fine-uploader-validation"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <textarea class="form-control" rows="15" json-text ng-model="vm.manifest"></textarea>
+        </div>
+    </div>
+
+</div>

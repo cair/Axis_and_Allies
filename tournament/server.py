@@ -2,7 +2,7 @@ import tornado.ioloop
 import tornado.web
 import os
 
-from tournament.UploadHandler import UploadHandler
+from tournament.routes import manifest, submission, upload
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -23,11 +23,13 @@ def setup_data_structure():
 if __name__ == "__main__":
     setup_data_structure()
 
-
     app = tornado.web.Application([
-        (r"/api/upload", UploadHandler),
+        (r"/api/submission/file_list", submission.FileListHandler),
+        (r"/api/submission/upload/", upload.UploadHandler),
+        (r"/api/submission/delete", submission.DeleteHandler),
+        (r"/api/manifest/save", manifest.SaveHandler),
+        (r"/api/manifest/load", manifest.LoadHandler),
         (r"/(.*)", tornado.web.StaticFileHandler, {'path': os.path.join(dir_path, "www",), "default_filename": "index.html"}),
-
     ])
     app.listen(8889)
     tornado.ioloop.IOLoop.current().start()

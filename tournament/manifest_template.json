@@ -1,0 +1,8 @@
+{
+  "entry_file": "Bot.py",
+  "author": "REQUIRED",
+  "email": "REQUIRED",
+  "project_name": "REQUIRED",
+  "version": "OPTIONAL",
+  "_manifest_version": "1"
+}
