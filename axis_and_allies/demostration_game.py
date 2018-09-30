@@ -2,7 +2,7 @@ import pygame
 import numpy as np
 from PIL import Image
 from pygame.locals import *
-
+from pprint import pprint
 
 from axis_and_allies.game import Game, GameManager
 from axis_and_allies.nation import Nation
@@ -79,7 +79,7 @@ def without_graphics():
     bot = Bot()
     bot2 = Bot()
     bot = NewBot2(attack_threshold=0.12)
-    #bot2 = NewBot2(attack_threshold=0.10)
+    bot2 = NewBot2(attack_threshold=0.12)
     germany = Nation(name='Germany', bot=bot)
     russia = Nation(name='Russia', bot=bot2)
     results = {}
@@ -100,6 +100,7 @@ def without_graphics():
 
                 results['winner'][winner] +=1
                 results['avg_rounds'][winner] += game.turn/number_of_rounds
+                #pprint(game.history)
                 break
     print(results)
 

@@ -12,12 +12,10 @@ class GameManager(object):
         self.previous_states = []
 
     def add_previous(self, game):
-        print("Legger til forrige")
         self.previous_states.append(copy.deepcopy(game))
 
     def go_back(self):
         try:
-            print("Går tilbake til forrige")
             previous_state = self.previous_states.pop()
             return previous_state
         except IndexError as e:
@@ -43,7 +41,9 @@ class Game:
         self.battles = []
         self.movable_units()
         self.recruitable_list = [2, 5]
-        self.history = []
+
+
+        self.history = {}
 
     def follow_these(self):
         '''
@@ -202,6 +202,14 @@ class Game:
                 recruitable.append(unit_cost)
         return recruitable
 
+    def logging(self):
+        if self.current_player.name not in self.history:
+            self.history[self.current_player.name] = {}
+        if self.turn not in self.history[self.current_player.name]:
+            self.history[self.current_player.name][self.turn] = {}
+        if self.phase not in self.history[self.current_player.name][self.turn]:
+            self.history[self.current_player.name][self.turn][self.phase] = {}
+
     def recruit_unit(self, unit_id):
         """
         This function is used to purchase units.
@@ -220,6 +228,10 @@ class Game:
             self.purchases[self.current_player] = []
 
         if unit is not None:
+            self.logging()
+            if 'purchases' not in self.history[self.current_player.name][self.turn][self.phase]:
+                self.history[self.current_player.name][self.turn][self.phase]['purchases'] = []
+            self.history[self.current_player.name][self.turn][self.phase]['purchases'].append(type(unit))
             self.purchases[self.current_player].append(unit)
         else:
             print("Invalid unit number")
@@ -277,9 +289,19 @@ class Game:
                 except ValueError:
                     print(ValueError.args)
 
+
+
+
             # The actual moving of the unit.
             to_tile.units.append(unit)
             from_tile.units.remove(unit)
+
+            self.logging()
+            if 'friendly_movement' not in self.history[self.current_player.name][self.turn][self.phase]:
+                self.history[self.current_player.name][self.turn][self.phase]['friendly_movement'] = []
+            self.history[self.current_player.name][self.turn][self.phase]['friendly_movement'].append(
+                (to_tile, from_tile, unit))
+
         return True
 
     def move_unit(self, from_tile, to_tile, unit):
@@ -320,9 +342,18 @@ class Game:
                 except ValueError:
                     print(ValueError.args)
 
+
+
             # The actual moving of the unit.
             to_tile.units.append(unit)
             from_tile.units.remove(unit)
+
+            self.logging()
+            if 'combat_movement' not in self.history[self.current_player.name][self.turn][self.phase]:
+                self.history[self.current_player.name][self.turn][self.phase]['combat_movement'] = []
+            self.history[self.current_player.name][self.turn][self.phase]['combat_movement'].append(
+                (to_tile, from_tile, unit))
+
         return True
 
     def reset_all_units(self):

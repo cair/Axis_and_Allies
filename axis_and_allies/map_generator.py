@@ -58,4 +58,4 @@ class Tile(object):
         self.value = 2
 
     def __repr__(self):
-        return self.owner.name+self.units.__str__()+self.constructions.__str__()
+        return self.cords.__str__()
