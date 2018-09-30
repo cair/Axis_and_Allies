@@ -13,7 +13,6 @@ class MapClass(object):
 
     def create_board(self):
         board = np.empty(self.size, dtype=Tile)
-        number_of_provinces = int((self.size[0] * self.size[1]) / self.nations.__len__())
 
         # Creates the tiles.
         counter = 1
@@ -40,6 +39,7 @@ class MapClass(object):
                     board[h][w].neighbours.append(board[h][w - 1])
 
         return board
+
 
 class Tile(object):
     def __init__(self, cords, name='nameless', water=False):
