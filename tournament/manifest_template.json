@@ -1,0 +1,10 @@
+{
+  "entrypoint": "Bot.py",
+  "class_name": "SuperBot",
+  "class_arguments": {},
+  "author": "REQUIRED",
+  "email": "REQUIRED",
+  "project_name": "REQUIRED",
+  "version": "OPTIONAL",
+  "_manifest_version": "1"
+}
