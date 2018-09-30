@@ -132,6 +132,7 @@
         vm.submission_files = [];
         vm.submission_id = null;
         vm.manifest = "";
+        vm.tournament_log = [];
         vm.generate_id = function () {
             // Math.random should be unique because of its seeding algorithm.
             // Convert it to base 36 (numbers + letters), and grab the first 9 characters
@@ -174,6 +175,7 @@
                   // 200 OK
                   vm.submission_files = [];
                   vm.manifest = {};
+                  vm.tournament_log = [];
                   vm.submission_files.push(...response.data.data);
                   Notification.success(response.data.type + ": " + response.data.message);
                   vm.load_manifest()
@@ -183,6 +185,7 @@
                       // Submission is not found
                       vm.submission_files = [];
                       vm.manifest = {};
+                      vm.tournament_log = [];
                       Notification.error(response.data.type + ": " + response.data.message);
                   }
 
@@ -217,6 +220,22 @@
                 }
             }).then(function(response){
                 vm.manifest = response.data.data;
+                Notification.success(response.data.type + ": " + response.data.message);
+            }, function(response){
+                // Error
+                Notification.error(response.data.type + ": " + response.data.message);
+            })
+        };
+
+        vm.run_tournament = function(){
+            $http({
+                method: "GET",
+                url: "/api/tournament/run",
+                params: {
+                    submission_id: vm.submission_id
+                }
+            }).then(function(response){
+                vm.tournament_log.push.apply(response.data.data);
                 Notification.success(response.data.type + ": " + response.data.message);
             }, function(response){
                 // Error

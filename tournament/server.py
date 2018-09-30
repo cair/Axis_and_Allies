@@ -2,7 +2,7 @@ import tornado.ioloop
 import tornado.web
 import os
 
-from tournament.routes import manifest, submission, upload
+from tournament.routes import manifest, submission, upload, tournament
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -29,6 +29,7 @@ if __name__ == "__main__":
         (r"/api/submission/delete", submission.DeleteHandler),
         (r"/api/manifest/save", manifest.SaveHandler),
         (r"/api/manifest/load", manifest.LoadHandler),
+        (r"/api/tournament/run", tournament.TournamentHandler),
         (r"/(.*)", tornado.web.StaticFileHandler, {'path': os.path.join(dir_path, "www",), "default_filename": "index.html"}),
     ])
     app.listen(8889)

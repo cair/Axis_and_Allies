@@ -1,5 +1,7 @@
 {
-  "entry_file": "Bot.py",
+  "entrypoint": "Bot.py",
+  "class_name": "SuperBot",
+  "class_arguments": {},
   "author": "REQUIRED",
   "email": "REQUIRED",
   "project_name": "REQUIRED",
