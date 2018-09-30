@@ -117,7 +117,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="item in vm.tournament_log">{{item | json}}</tr>
+                <tr ng-repeat="log in vm.tournament_log"><td>{{log | json}}</td></tr>
                 </tbody>
             </table>
         </div>

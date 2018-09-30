@@ -235,7 +235,8 @@
                     submission_id: vm.submission_id
                 }
             }).then(function(response){
-                vm.tournament_log.push.apply(response.data.data);
+                console.log(response.data.data)
+                vm.tournament_log.push(...response.data.data);
                 Notification.success(response.data.type + ": " + response.data.message);
             }, function(response){
                 // Error

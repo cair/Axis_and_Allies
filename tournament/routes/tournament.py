@@ -92,5 +92,4 @@ class TournamentHandler(tornado.web.RequestHandler):
                     results['winner'][winner.name] +=1
                     results['avg_rounds'][winner.name] += game.turn/number_of_rounds
                     break
-        print(results)
         return results

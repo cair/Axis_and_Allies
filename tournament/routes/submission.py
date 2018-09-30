@@ -46,7 +46,7 @@ class FileListHandler(tornado.web.RequestHandler):
 
         self.set_status(200)
         self.write({
-            "type": "SUCCESS",
+            "type": "OK",
             "message": "Received submission file list",
             "data": files
         })
