@@ -71,7 +71,7 @@ class TournamentHandler(tornado.web.RequestHandler):
 
         return bot_instance
 
-    def run_game(self, bot_1, bot_2, n_games=6, w=6, h=6):
+    def run_game(self, bot_1, bot_2, n_games=50, w=6, h=6):
         germany = Nation(name=str(bot_1.__module__), bot=bot_1)
         russia = Nation(name=str(bot_2.__module__), bot=bot_2)
         results = {
