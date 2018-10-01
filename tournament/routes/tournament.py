@@ -11,9 +11,10 @@ from axis_and_allies.nation import Nation
 dir_path = os.path.dirname(os.path.realpath(__file__))
 # jpqaw53r9
 
+
 class TournamentHandler(tornado.web.RequestHandler):
 
-    async def get(self):
+    def get(self):
 
         submission_id = self.get_argument("submission_id", default=None)
 
