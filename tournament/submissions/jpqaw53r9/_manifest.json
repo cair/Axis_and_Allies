@@ -1,8 +1,8 @@
 {
   "_manifest_version": "1",
   "author": "Per-Arne",
-  "class_name": "SuperBot",
   "class_arguments": {},
+  "class_name": "SuperBot",
   "email": "per@sysx.no",
   "entrypoint": "bot.py",
   "project_name": "SuperBot",
