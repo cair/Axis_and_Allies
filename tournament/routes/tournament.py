@@ -75,22 +75,23 @@ class TournamentHandler(tornado.web.RequestHandler):
         germany = Nation(name=str(bot_1.__module__), bot=bot_1)
         russia = Nation(name=str(bot_2.__module__), bot=bot_2)
         results = {}
-        number_of_rounds = 100
+
+        results['bot_1'] = {'bot_name': str(bot_1.__module__), 'wins': 0, 'avg_rounds': 0}
+        results['bot_2'] = {'bot_name': str(bot_2.__module__), 'wins': 0, 'avg_rounds': 0}
+
+        number_of_rounds = 10
         for i in range(0, number_of_rounds):
             game = Game(size=(6, 6), nations=[germany, russia])
             while True:
                 game.bot()
                 is_there_a_winner, winner = game.is_there_a_winner()
                 if is_there_a_winner:
-                    if 'winner' not in results:
-                        results['winner'] = {}
-                        results['avg_rounds'] = {}
-
-                    if winner not in results['winner']:
-                        results['winner'][winner.name] = 0
-                        results['avg_rounds'][winner.name] = 0
-
-                    results['winner'][winner.name] +=1
-                    results['avg_rounds'][winner.name] += game.turn/number_of_rounds
+                    if winner == game.nations[0]:
+                        results['bot_1']['wins'] +=1
+                        results['bot_1']['avg_rounds'] += game.turn/number_of_rounds
+                    elif winner == game.nations[1]:
+                        results['bot_2']['wins'] += 1
+                        results['bot_2']['avg_rounds'] += game.turn / number_of_rounds
                     break
+
         return results
