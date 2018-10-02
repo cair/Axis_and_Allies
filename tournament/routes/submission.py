@@ -78,8 +78,8 @@ class DeleteHandler(tornado.web.RequestHandler):
 
 
         self.write({
-            "type": "SUBMISSION_DELETED",
-            "message": None
+            "type": "OK",
+            "message": "SUBMISSION_DELETED"
         })
         self.finish()
     get = post
