@@ -4,6 +4,8 @@ from axis_and_allies.units import Infantry, Tank
 from axis_and_allies.bot import Bot
 from axis_and_allies.game import Game
 
+
+
 class NewBot(Bot):
     '''
     Read in bot.py for instructions about the different phases.

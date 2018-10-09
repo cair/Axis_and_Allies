@@ -214,7 +214,7 @@ class Game:
         """
         This function is used to purchase units.
         :param unit_id: is the id for unit
-        :return: nothing. Adds the purchased unit to the purchases dict.
+        :return: A bool, if the purchase was completed or not. Adds the purchased unit to the purchases dict.
         """
         unit = None
         if unit_id == 0:
@@ -235,6 +235,12 @@ class Game:
             self.purchases[self.current_player].append(unit)
         else:
             print("Invalid unit number")
+
+        if unit:
+            return True
+        else:
+            return False
+
 
     def init_turn(self):
         """
