@@ -28,7 +28,7 @@ class Game:
         self.size = size
         self.map = MapClass(size, nations)
         self.nations = nations
-        self.start_player = r.choice(self.nations)
+        self.start_player = self.nations[0]#r.choice(self.nations)
         self.current_player = self.start_player
         self.terminal = False
         self.turn = 0

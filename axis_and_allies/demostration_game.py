@@ -28,7 +28,7 @@ def translate_to_array(board, x, y, game):
 
 
 def with_pauses():
-    x, y = 8, 8
+    x, y = 5, 5
 
     germany = Nation(name='Germany')
     russia = Nation(name='Russia')
@@ -82,6 +82,7 @@ def without_graphics():
     bot2 = NewBot2(attack_threshold=0.12)
     germany = Nation(name='Germany', bot=bot)
     russia = Nation(name='Russia', bot=bot2)
+
     results = {}
     number_of_rounds = 100
     for i in range(0, number_of_rounds):
@@ -149,6 +150,6 @@ def without_pauses():
         i += 1
 
 
-# with_pauses()
+#with_pauses()
 #without_pauses()
 without_graphics()
