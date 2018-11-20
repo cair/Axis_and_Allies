@@ -75,7 +75,7 @@ def with_pauses():
 
 
 def without_graphics():
-    x, y = 5, 6
+    x, y = 6, 6
     bot = Bot()
     bot2 = Bot()
     bot = NewBot2(attack_threshold=0.12)
@@ -88,6 +88,7 @@ def without_graphics():
     for i in range(0, number_of_rounds):
         game = Game(size=(x, y), nations=[germany, russia])
         while True:
+            game.calculate_values()
             game.bot()
             is_there_a_winner, winner = game.is_there_a_winner()
             if is_there_a_winner:
@@ -106,8 +107,9 @@ def without_graphics():
     print(results)
 
 
+
 def without_pauses():
-    x, y = 5, 6
+    x, y = 6, 6
     bot = Bot()
     bot2 = Bot()
     bot = NewBot2(attack_threshold=0.10)

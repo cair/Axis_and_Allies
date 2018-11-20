@@ -7,14 +7,11 @@ class Interface:
     def purchase_inf(self, game: Game):
         game.recruit_unit(0)
 
-
     def purchase_tank(self, game: Game):
         game.recruit_unit(1)
 
-
     def next_phase(self, game):
         game.next_phase()
-
 
     def select_inf(self, game):
         for unit in game.movable:
@@ -24,7 +21,6 @@ class Interface:
             else:
                 return False, None
 
-
     def select_tank(self, game):
         for unit in game.movable:
             if game.phase == 2 or game.phase == 3:
@@ -32,7 +28,6 @@ class Interface:
                     return True, unit
             else:
                 return False, None
-
 
     def move_right(self, game, unit):
         if unit is None:
@@ -46,7 +41,6 @@ class Interface:
         else:
             return False
 
-
     def move_left(self, game, unit):
         if unit is None:
             return False
@@ -58,7 +52,6 @@ class Interface:
         else:
             return False
 
-
     def move_up(self, game, unit):
         if unit is None:
             return False
@@ -69,7 +62,6 @@ class Interface:
             return True
         else:
             return False
-
 
     def move_down(self, game, unit):
         if unit is None:

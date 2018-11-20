@@ -1,6 +1,8 @@
 import random as r
 import copy
 
+import numpy as np
+
 from axis_and_allies.map_generator import MapClass
 from axis_and_allies import units
 from axis_and_allies.buildings import Buildings as buildings
@@ -295,9 +297,6 @@ class Game:
                 except ValueError:
                     print(ValueError.args)
 
-
-
-
             # The actual moving of the unit.
             to_tile.units.append(unit)
             from_tile.units.remove(unit)
@@ -438,6 +437,48 @@ class Game:
             dict_of_nations[nation.name] = total
 
         return dict_of_nations
+
+    def calculate_values(self):
+        '''
+        This function is used to calculate the value of a province relative to the where the industry is.
+        :return:
+        '''
+        positions = {}
+        for h in self.map.board:
+            for w in h:
+                if len(w.constructions) > 0:
+                    for construction in w.constructions:
+                        if type(construction) == buildings.Industry:
+                            if w not in positions:
+                                positions[w] = w
+        size = self.map.size
+        values = np.full(size, -1)
+        for h in self.map.board:
+            for w in h:
+                for i, coords in enumerate(positions):
+                    if positions[coords].owner == self.current_player:
+                        industry_tile = positions[coords]
+                        if w.owner == self.current_player:
+                            distance = self.calculate_distance_between_tiles(industry_tile, w)
+                            if i > 0:
+                                value = values[w.cords[0]][w.cords[1]]
+                                if distance < value or value == -1:
+                                    values[w.cords[0]][w.cords[1]] = distance
+                            else:
+                                values[w.cords[0]][w.cords[1]] = distance
+                    else:
+                        industry_tile = positions[coords]
+                        if w.owner != self.current_player:
+                            distance = self.calculate_distance_between_tiles(industry_tile, w)
+                            if i > 0:
+                                value = values[w.cords[0]][w.cords[1]]
+                                if distance < value or value == -1:
+                                    values[w.cords[0]][w.cords[1]] = distance
+                            else:
+                                values[w.cords[0]][w.cords[1]] = distance
+
+        return values
+
 
     def calculate_units(self):
         '''
